@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import '../data/demo_data.dart';
 import '../data/models.dart';
 import '../l10n/app_localizations.dart';
@@ -22,7 +22,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l;
-    final state = context.watch<AppState>();
+  
 
     // ===== بناء النتائج حسب الفلاتر =====
     final results = <_ResultItem>[];
