@@ -7,9 +7,11 @@ import 'l10n/app_localizations.dart';
 import 'state/app_state.dart';
 import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
+import 'supabase.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initSupabase(); // تفعيل الاتصال بـ Supabase
   final prefs = await SharedPreferences.getInstance();
   runApp(TravelInApp(prefs: prefs));
 }
