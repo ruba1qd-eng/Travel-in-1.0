@@ -265,7 +265,7 @@ class HomeScreen extends StatelessWidget {
                   child: Row(children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(kDemoImg,
+                      child: Image.network(hotelImg(h.provinceId, h.id.hashCode.abs()),
                           width: 74,
                           height: 74,
                           fit: BoxFit.cover,
