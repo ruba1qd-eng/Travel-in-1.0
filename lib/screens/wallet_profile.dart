@@ -5,6 +5,8 @@ import '../l10n/app_localizations.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import 'auth_screens.dart';
+import 'avatar_picker.dart';
+import 'support_screen.dart';
 
 /// ============ تبويب المحفظة ============
 class WalletTab extends StatelessWidget {
@@ -202,19 +204,8 @@ class ProfileTab extends StatelessWidget {
           // بطاقة الملف
           Center(
             child: Column(children: [
-              CircleAvatar(
-                radius: 44,
-                backgroundColor: TIColors.teal.withOpacity(.15),
-                child: Text(
-                  user?.firstName.isNotEmpty == true
-                      ? user!.firstName[0].toUpperCase()
-                      : 'T',
-                  style: const TextStyle(
-                      fontSize: 34,
-                      color: TIColors.teal,
-                      fontWeight: FontWeight.w900),
-                ),
-              ),
+              // الصورة الشخصية — قابلة للتغيير من معرض الصور
+              const AvatarPicker(radius: 44),
               const SizedBox(height: 12),
               Text(user?.fullName ?? '',
                   style: const TextStyle(
@@ -269,7 +260,13 @@ class ProfileTab extends StatelessWidget {
           _item(context, Icons.favorite_outline, l.t('favorites'), () {
             _showFavorites(context);
           }),
-          _item(context, Icons.help_outline, l.t('helpCenter'), () {}),
+          // مركز المساعدة — يفتح محادثات الدعم الحقيقية
+          _item(context, Icons.help_outline, l.t('helpCenter'), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SupportScreen()),
+            );
+          }),
           _item(context, Icons.logout, l.t('logout'), () {
             _logout(context);
           },
