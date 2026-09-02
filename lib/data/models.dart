@@ -49,10 +49,38 @@ class AppUser {
       );
 }
 
-/// عنوان صورة عام — جميع الصور توضيحية (Demo) وليست صوراً حقيقية للفنادق
+/// صور توضيحية من مصدر مرخص (Unsplash) — تُستبدل بصور الشركاء عند الإطلاق
+const Map<String, String> kProvinceImgs = {
+  'sanaa': 'photo-1518684079-3c830dcef090',
+  'aden': 'photo-1548510340-358d43a0e8e2',
+  'taiz': 'photo-1548013146-72479768bada',
+  'hadramout': 'photo-1544735716-392fe2489ffa',
+  'hodeidah': 'photo-1544551763-46a013bb70d5',
+  'ibb': 'photo-1506905925346-21bda4d32df4',
+  'marib': 'photo-1533130061792-64b345e4a833',
+  'socotra': 'photo-1540914124281-342587941389',
+};
+
+String hotelImg(String provinceId, int index) =>
+    'https://images.unsplash.com/${kProvinceImgs[provinceId] ?? kProvinceImgs['sanaa']}?w=600&q=70&sig=$index';
+
+const List<String> kCarImgs = [
+  'photo-1550355291-bbee04a92027',
+  'photo-1552519507-da3b142c6e3d',
+  'photo-1519641471654-76ce0107ad1b',
+  'photo-1568605117036-5fe5e7bab0b7',
+  'photo-1541899481282-d53bffe3c35d',
+  'photo-1583121274602-3e2820c69888',
+  'photo-1502877338535-766e1452684a',
+];
+
+String carImg(String carId) {
+  final i = int.tryParse(carId.substring(1)) ?? 0;
+  return 'https://images.unsplash.com/${kCarImgs[i % kCarImgs.length]}?w=600&q=70';
+}
+
 const String kDemoImg =
     'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=60';
-
 class Province {
   final String id;
   final Availability status;
