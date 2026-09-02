@@ -6,10 +6,10 @@ import '../l10n/app_localizations.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import 'details_screens.dart';
+import 'transport_booking_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final l = context.l;
@@ -50,7 +50,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ]),
         actions: [
-          // مبدّل العملة YER/USD/SAR
           PopupMenuButton<String>(
             onSelected: state.setCurrency,
             icon: Text(state.currency,
@@ -93,8 +92,8 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border:
-                    Border.all(color: Theme.of(context).dividerColor.withOpacity(.4)),
+                border: Border.all(
+                    color: Theme.of(context).dividerColor.withOpacity(.4)),
               ),
               child: Row(children: [
                 const Icon(Icons.search, color: TIColors.teal),
@@ -106,15 +105,14 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // ===== العروض المميزة (Carousel) =====
-          _sectionHeader(l.t('featuredOffers'), onAll: () {}),
+          // ===== العروض المميزة =====
+          _sectionHeader(l.t('featuredOffers')),
           const SizedBox(height: 10),
           SizedBox(
             height: 150,
             child: PageView.builder(
               itemCount: kOffers.length,
-              controller:
-                  PageController(viewportFraction: .88),
+              controller: PageController(viewportFraction: .88),
               itemBuilder: (_, i) {
                 final o = kOffers[i];
                 return GestureDetector(
@@ -168,7 +166,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 22),
 
           // ===== الخدمات =====
-          _sectionHeader(l.t('services'), onAll: () {}),
+          _sectionHeader(l.t('services')),
           const SizedBox(height: 10),
           GridView.count(
             crossAxisCount: 3,
@@ -192,8 +190,8 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 22),
 
-          // ===== المحافظات مع حالة التوفر =====
-          _sectionHeader(l.t('provinces'), onAll: () {}),
+          // ===== المحافظات =====
+          _sectionHeader(l.t('provinces')),
           const SizedBox(height: 10),
           SizedBox(
             height: 92,
@@ -235,8 +233,7 @@ class HomeScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(label,
-                            style:
-                                TextStyle(fontSize: 10, color: color)),
+                            style: TextStyle(fontSize: 10, color: color)),
                       ),
                     ],
                   ),
@@ -247,12 +244,12 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 22),
 
           // ===== مقترح لك =====
-          _sectionHeader(l.t('recommended'), onAll: () {}),
+          _sectionHeader(l.t('recommended')),
           const SizedBox(height: 10),
           ...kHotels.take(3).map((h) => GestureDetector(
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) =>
-                        DetailsScreen(service: ServiceType.hotel, targetId: h.id))),
+                    builder: (_) => DetailsScreen(
+                        service: ServiceType.hotel, targetId: h.id))),
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(12),
@@ -265,7 +262,8 @@ class HomeScreen extends StatelessWidget {
                   child: Row(children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(hotelImg(h.provinceId, h.id.hashCode.abs()),
+                      child: Image.network(
+                          hotelImg(h.provinceId, h.id.hashCode.abs()),
                           width: 74,
                           height: 74,
                           fit: BoxFit.cover,
@@ -329,32 +327,25 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _sectionHeader(String title, {required VoidCallback onAll}) => Row(
-        children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-          const Spacer(),
-          TextButton(
-              onPressed: onAll,
-              child: Text(title.contains('Offers') || title.contains('عروض')
-                  ? ''
-                  : ''),
-          ),
-        ],
+  Widget _sectionHeader(String title) => Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text(title,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
       );
 
   Widget _service(BuildContext context, IconData icon, String label,
       ServiceType type) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => DetailsScreen(service: type, targetId: 'list'))),
+          builder: (_) => type == ServiceType.localRide
+              ? const TransportBookingScreen()
+              : DetailsScreen(service: type, targetId: 'list'))),
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border:
-              Border.all(color: Theme.of(context).dividerColor.withOpacity(.4)),
+          border: Border.all(
+              color: Theme.of(context).dividerColor.withOpacity(.4)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -371,8 +362,8 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(label,
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                    fontSize: 11.5, fontWeight: FontWeight.w700),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
           ],
