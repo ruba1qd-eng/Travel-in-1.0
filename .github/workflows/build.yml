@@ -24,6 +24,9 @@ jobs:
       - name: Generate project files
         run: flutter create . --platforms android,web --org com.travelin --project-name travel_in_app
 
+      - name: Remove auto test file
+        run: rm -rf test
+
       - name: Install dependencies
         run: flutter pub get
 
