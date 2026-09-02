@@ -5,13 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/models.dart';
 import '../l10n/app_localizations.dart';
 
-class AppState extends ChangeNotifier { 
-   final SharedPreferences prefs;
-   late AppLocalizations l10n;
-   static AppState? instance;
-   AppState(this.prefs) {
-     instance = this;
-   }
+class AppState extends ChangeNotifier {
+  final SharedPreferences prefs;
+  late AppLocalizations l10n;
+  static AppState? instance;
+  AppState(this.prefs) {
+    instance = this;
+  }
+
   // ===== إعدادات عامة =====
   Locale _locale = const Locale('ar');
   ThemeMode _themeMode = ThemeMode.system;
@@ -91,16 +92,24 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateProfile({String? firstName, String? secondName, int? age}) {
+  // تعديل الملف الشخصي — يدعم الاسم والإيميل والرقم والصورة
+  void updateProfile({
+    String? firstName,
+    String? secondName,
+    int? age,
+    String? phone,
+    String? email,
+    String? photoUrl,
+  }) {
     if (user == null) return;
     user = AppUser(
       id: user!.id,
       firstName: firstName ?? user!.firstName,
       secondName: secondName ?? user!.secondName,
       age: age ?? user!.age,
-      phone: user!.phone,
-      email: user!.email,
-      photoUrl: user!.photoUrl,
+      phone: phone ?? user!.phone,
+      email: email ?? user!.email,
+      photoUrl: photoUrl ?? user!.photoUrl,
       role: user!.role,
       membership: user!.membership,
     );
