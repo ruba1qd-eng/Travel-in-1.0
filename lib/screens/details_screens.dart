@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/demo_data.dart';
 import '../data/models.dart';
+import '../data/real_hotels_data.dart';
 import '../l10n/app_localizations.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
@@ -49,7 +50,7 @@ class _CategoryListScreen extends StatelessWidget {
     if (service == ServiceType.hotel) {
       title = l.t('hotels');
       tiles = [
-        for (final h in kHotels)
+        for (final h in getAllHotels())
           _Tile(
             icon: Icons.hotel,
             title: h.name,
@@ -186,7 +187,7 @@ class _HotelDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l;
     final state = context.watch<AppState>();
-    final hotel = kHotels.firstWhere((h) => h.id == hotelId);
+    final hotel = getAllHotels().firstWhere((h) => h.id == hotelId);
 
     return Scaffold(
       body: CustomScrollView(slivers: [
@@ -204,7 +205,8 @@ class _HotelDetails extends StatelessWidget {
             ),
           ],
           flexibleSpace: FlexibleSpaceBar(
-                background: Image.network(hotelImg(hotel.provinceId, hotel.id.hashCode.abs()), 
+            background: Image.network(
+                hotelImg(hotel.provinceId, hotel.id.hashCode.abs()),
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) =>
                     Container(color: TIColors.navy)),
@@ -358,21 +360,158 @@ class _HotelDetails extends StatelessWidget {
 
   void _bookRoom(BuildContext context, AppLocalizations l, Hotel hotel,
       HotelRoom room) {
-    final nights = 2;
-    final total = room.pricePerNightYer * nights;
+    final now = DateTime.now();
+    DateTime? checkIn;
+    DateTime? checkOut;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (_) => BookingSheet(
-        service: ServiceType.hotel,
-        title: '${hotel.name} — ${room.name}',
-        provinceId: hotel.provinceId,
-        cityId: hotel.cityId,
-        basePriceYer: total,
-        dateLabel: '${l.t('checkIn')} → ${l.t('checkOut')} ($nights ${l.t('days')})',
-        details: {'room': room.name, 'nights': nights},
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (sheetCtx, setSheet) {
+          final nights = (checkIn != null && checkOut != null)
+              ? checkOut!.difference(checkIn!).inDays
+              : 0;
+          final total = nights > 0 ? room.pricePerNightYer * nights : 0.0;
+
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(sheetCtx).viewInsets.bottom),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.4),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${hotel.name} — ${room.name}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w900, fontSize: 15)),
+                          const SizedBox(height: 14),
+                          Row(children: [
+                            Text(l.t('checkIn'),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13)),
+                            const Spacer(),
+                            Text(l.t('checkOut'),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13)),
+                          ]),
+                          const SizedBox(height: 6),
+                          Row(children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                  onPressed: () async {
+                                    final d = await showDatePicker(
+                                        context: context,
+                                        initialDate: now,
+                                        firstDate: now,
+                                        lastDate: now
+                                            .add(const Duration(days: 365)));
+                                    if (d != null) {
+                                      setSheet(() {
+                                        checkIn = d;
+                                        if (checkOut != null &&
+                                            !checkOut!.isAfter(checkIn!)) {
+                                          checkOut = null;
+                                        }
+                                      });
+                                    }
+                                  },
+                                  child: Text(checkIn == null
+                                      ? l.t('date')
+                                      : '${checkIn!.day}/${checkIn!.month}/${checkIn!.year}')),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: OutlinedButton(
+                                  onPressed: checkIn == null
+                                      ? null
+                                      : () async {
+                                          final d = await showDatePicker(
+                                              context: context,
+                                              initialDate: checkIn!
+                                                  .add(const Duration(days: 1)),
+                                              firstDate: checkIn!
+                                                  .add(const Duration(days: 1)),
+                                              lastDate: checkIn!.add(
+                                                  const Duration(days: 365)));
+                                          if (d != null) {
+                                            setSheet(() => checkOut = d);
+                                          }
+                                        },
+                                  child: Text(checkOut == null
+                                      ? l.t('date')
+                                      : '${checkOut!.day}/${checkOut!.month}/${checkOut!.year}')),
+                            ),
+                          ]),
+                          const SizedBox(height: 10),
+                          Row(children: [
+                            Text('${l.t('duration')}:',
+                                style: TextStyle(
+                                    color: Theme.of(sheetCtx).hintColor)),
+                            const SizedBox(width: 6),
+                            Text(nights > 0 ? '$nights ${l.t('days')}' : '—',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: TIColors.teal)),
+                          ]),
+                          const SizedBox(height: 6),
+                          Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(l.t('total'),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w800)),
+                                Text(l.money(total),
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w900,
+                                        color: TIColors.teal)),
+                              ]),
+                        ]),
+                  ),
+                  const SizedBox(height: 8),
+                  BookingSheet(
+                    service: ServiceType.hotel,
+                    title: '${hotel.name} — ${room.name}',
+                    provinceId: hotel.provinceId,
+                    cityId: hotel.cityId,
+                    basePriceYer: total > 0 ? total : room.pricePerNightYer,
+                    dateLabel: (checkIn != null && checkOut != null)
+                        ? '${checkIn!.day}/${checkIn!.month} → ${checkOut!.day}/${checkOut!.month} ($nights ${l.t('days')})'
+                        : l.t('date'),
+                    details: {
+                      'room': room.name,
+                      'nights': nights,
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -395,18 +534,18 @@ class _CarDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(withDriver ? l.t('localRide') : l.t('rentCar'))),
       body: ListView(padding: const EdgeInsets.all(16), children: [
-                  ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.network(carImg(car.id),
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                    height: 180,
-                    color: TIColors.teal.withOpacity(.08),
-                    child: const Icon(Icons.directions_car_filled,
-                        size: 80, color: TIColors.teal))),
-          ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.network(carImg(car.id),
+              height: 180,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                  height: 180,
+                  color: TIColors.teal.withOpacity(.08),
+                  child: const Icon(Icons.directions_car_filled,
+                      size: 80, color: TIColors.teal))),
+        ),
         const SizedBox(height: 16),
         Row(children: [
           Expanded(
@@ -469,7 +608,7 @@ class _CarDetails extends StatelessWidget {
           ]),
           FilledButton(
               onPressed: () {
-                final days = 1;
+                const days = 1;
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -477,8 +616,9 @@ class _CarDetails extends StatelessWidget {
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(24))),
                   builder: (_) => BookingSheet(
-                    service:
-                        withDriver ? ServiceType.localRide : ServiceType.rentCar,
+                    service: withDriver
+                        ? ServiceType.localRide
+                        : ServiceType.rentCar,
                     title: car.name,
                     provinceId: 'sanaa',
                     cityId: 'sanaa_city',
@@ -545,7 +685,9 @@ class _TourDetails extends StatelessWidget {
                         decoration: const BoxDecoration(
                             color: TIColors.gold, shape: BoxShape.circle)),
                     Expanded(
-                        child: Container(width: 2, color: TIColors.gold.withOpacity(.4))),
+                        child: Container(
+                            width: 2,
+                            color: TIColors.gold.withOpacity(.4))),
                   ]),
                   const SizedBox(width: 10),
                   Expanded(
@@ -573,7 +715,9 @@ class _TourDetails extends StatelessWidget {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(l.money(tour.priceYer),
               style: const TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.w900, color: TIColors.teal)),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: TIColors.teal)),
           FilledButton(
               onPressed: () => showModalBottomSheet(
                     context: context,
@@ -636,24 +780,24 @@ class _AirportDetails extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(18),
-            border:
-                Border.all(color: Theme.of(context).dividerColor.withOpacity(.4)),
+            border: Border.all(
+                color: Theme.of(context).dividerColor.withOpacity(.4)),
           ),
           child: Column(children: [
             SegmentedButton<String>(
               segments: const [
-                ButtonSegment(value: 'arrival', label: Icon(Icons.flight_land)),
-                ButtonSegment(value: 'depart', label: Icon(Icons.flight_takeoff)),
+                ButtonSegment(
+                    value: 'arrival', label: Icon(Icons.flight_land)),
+                ButtonSegment(
+                    value: 'depart', label: Icon(Icons.flight_takeoff)),
               ],
               selected: const {'arrival'},
             ),
             const SizedBox(height: 16),
             TextField(
-                decoration:
-                    InputDecoration(labelText: l.t('flightNo'))),
+                decoration: InputDecoration(labelText: l.t('flightNo'))),
             const SizedBox(height: 12),
-            TextField(
-                decoration: InputDecoration(labelText: l.t('date'))),
+            TextField(decoration: InputDecoration(labelText: l.t('date'))),
             const SizedBox(height: 12),
             TextField(
                 decoration: InputDecoration(labelText: l.t('passengers'))),
