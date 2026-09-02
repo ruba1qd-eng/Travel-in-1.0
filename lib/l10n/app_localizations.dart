@@ -36,7 +36,7 @@ class AppLocalizations {
     }
   }
 
-  String currency = 'YER';
+   static String currency = 'YER';
 
   String duration(int minutes) {
     final h = minutes ~/ 60, m = minutes % 60;
