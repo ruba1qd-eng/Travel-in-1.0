@@ -8,6 +8,7 @@ import 'state/app_state.dart';
 import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
 import 'supabase.dart';
+import 'animations/page_transitions.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,13 @@ class TravelInApp extends StatelessWidget {
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
             themeMode: state.themeMode,
+            themeAnimationDuration: const Duration(milliseconds: 300),
+           pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: SmoothPageTransitionsBuilder(),
+            TargetPlatform.iOS: SmoothPageTransitionsBuilder(),
+          },
+        ),
             locale: state.locale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: const [
