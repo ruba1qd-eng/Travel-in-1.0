@@ -183,7 +183,7 @@ class AppState extends ChangeNotifier {
     );
     bookings.insert(0, b);
     prefs.setString('bookings', jsonEncode(bookings.map((e) => e.toJson()).toList()));
-    notifications.insert(0, '✅ ${l10n.t('bookingConfirmed')} — $title (${b.id})');
+    notifications.insert(0, '✅ $title (${b.id})');
     notifyListeners();
     return true;
   }
