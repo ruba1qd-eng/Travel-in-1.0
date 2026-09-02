@@ -44,14 +44,12 @@ class _AvatarPickerState extends State<AvatarPicker> {
       final deviceId = await DeviceSession.deviceId();
       final path = '$deviceId.jpg';
 
-      await supabase.storage.from('avatars').uploadBinary(
-        path,
-        bytes,
-        fileOptions: const FileOptions(
-          upsert: true,
-          contentType: 'image/jpeg',
-        ),
-      );
+      // حذف أي صورة سابقة ثم رفع الجديدة
+      try {
+        await supabase.storage.from('avatars').remove([path]);
+      } catch (_) {}
+
+      await supabase.storage.from('avatars').uploadBinary(path, bytes);
 
       var url = supabase.storage.from('avatars').getPublicUrl(path);
       // كسر الكاش حتى تظهر الصورة الجديدة فوراً
