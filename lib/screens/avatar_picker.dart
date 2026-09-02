@@ -45,13 +45,13 @@ class _AvatarPickerState extends State<AvatarPicker> {
       final path = '$deviceId.jpg';
 
       await supabase.storage.from('avatars').uploadBinary(
-            path,
-            bytes,
-            fileOptions: const FileOptions(
-              upsert: true,
-              contentType: 'image/jpeg',
-            ),
-          );
+        path,
+        bytes,
+        fileOptions: const FileOptions(
+          upsert: true,
+          contentType: 'image/jpeg',
+        ),
+      );
 
       var url = supabase.storage.from('avatars').getPublicUrl(path);
       // كسر الكاش حتى تظهر الصورة الجديدة فوراً
@@ -87,8 +87,8 @@ class _AvatarPickerState extends State<AvatarPicker> {
                   : null,
             ),
             Positioned(
+              right: 0,
               bottom: 0,
-              end: 0,
               child: InkWell(
                 onTap: _uploading ? null : _pickAndUpload,
                 child: CircleAvatar(
