@@ -204,7 +204,7 @@ class _HotelDetails extends StatelessWidget {
             ),
           ],
           flexibleSpace: FlexibleSpaceBar(
-            background: Image.network(kDemoImg,
+                background: Image.network(hotelImg(hotel.provinceId, hotel.id.hashCode.abs()), 
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) =>
                     Container(color: TIColors.navy)),
@@ -395,15 +395,18 @@ class _CarDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(withDriver ? l.t('localRide') : l.t('rentCar'))),
       body: ListView(padding: const EdgeInsets.all(16), children: [
-        Container(
-          height: 180,
-          decoration: BoxDecoration(
-            color: TIColors.teal.withOpacity(.08),
+                  ClipRRect(
             borderRadius: BorderRadius.circular(20),
+            child: Image.network(carImg(car.id),
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                    height: 180,
+                    color: TIColors.teal.withOpacity(.08),
+                    child: const Icon(Icons.directions_car_filled,
+                        size: 80, color: TIColors.teal))),
           ),
-          child: const Icon(Icons.directions_car_filled,
-              size: 80, color: TIColors.teal),
-        ),
         const SizedBox(height: 16),
         Row(children: [
           Expanded(
