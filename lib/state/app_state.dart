@@ -5,11 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/models.dart';
 import '../l10n/app_localizations.dart';
 
-class AppState extends ChangeNotifier {
-  final SharedPreferences prefs;
-  late AppLocalizations l10n;
-  AppState(this.prefs);
-
+class AppState extends ChangeNotifier { 
+   final SharedPreferences prefs;
+   late AppLocalizations l10n;
+   static AppState? instance;
+   AppState(this.prefs) {
+     instance = this;
+   }
   // ===== إعدادات عامة =====
   Locale _locale = const Locale('ar');
   ThemeMode _themeMode = ThemeMode.system;
