@@ -7,7 +7,7 @@ import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import 'booking_screens.dart';
 
-/// شاشة تفاصيل موحّدة: فندق / سيارة / رحلة / مطار
+/// شاشة تفاصيل موحّدة — وإذا كان targetId == 'list' تفتح قائمة العناصر
 class DetailsScreen extends StatelessWidget {
   final ServiceType service;
   final String targetId;
@@ -15,6 +15,10 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (targetId == 'list') {
+      if (service == ServiceType.airport) return const _AirportDetails();
+      return _CategoryListScreen(service: service);
+    }
     switch (service) {
       case ServiceType.hotel:
         return _HotelDetails(hotelId: targetId);
@@ -25,8 +29,149 @@ class DetailsScreen extends StatelessWidget {
       case ServiceType.package:
         return _TourDetails(tourId: targetId);
       case ServiceType.airport:
-        return _AirportDetails();
+        return const _AirportDetails();
     }
+  }
+}
+
+/// ===== قائمة عناصر الخدمة =====
+class _CategoryListScreen extends StatelessWidget {
+  final ServiceType service;
+  const _CategoryListScreen({required this.service});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l;
+
+    String title;
+    List<Widget> tiles;
+
+    if (service == ServiceType.hotel) {
+      title = l.t('hotels');
+      tiles = [
+        for (final h in kHotels)
+          _Tile(
+            icon: Icons.hotel,
+            title: h.name,
+            subtitle: '${l.province(h.provinceId)} • ⭐ ${h.rating}',
+            trailing: h.rooms.isNotEmpty ? l.money(h.rooms.first.pricePerNightYer) : '—',
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) =>
+                    DetailsScreen(service: ServiceType.hotel, targetId: h.id))),
+          ),
+      ];
+    } else if (service == ServiceType.localRide) {
+      title = l.t('localRide');
+      tiles = [
+        for (final c in kCars.where((c) => c.withDriver))
+          _Tile(
+            icon: Icons.directions_car,
+            title: c.name,
+            subtitle: '${l.carCat(c.categoryId)} • ${c.seats} ${l.t('seats')}',
+            trailing: l.money(c.pricePerDayYer),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => DetailsScreen(
+                    service: ServiceType.localRide, targetId: c.id))),
+          ),
+      ];
+    } else if (service == ServiceType.rentCar) {
+      title = l.t('rentCar');
+      tiles = [
+        for (final c in kCars.where((c) => !c.withDriver))
+          _Tile(
+            icon: Icons.car_rental,
+            title: c.name,
+            subtitle: '${l.carCat(c.categoryId)} • ${c.seats} ${l.t('seats')}',
+            trailing: l.money(c.pricePerDayYer),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => DetailsScreen(
+                    service: ServiceType.rentCar, targetId: c.id))),
+          ),
+      ];
+    } else {
+      title = service == ServiceType.package ? l.t('packages') : l.t('tours');
+      tiles = [
+        for (final t in kTours)
+          _Tile(
+            icon: Icons.map,
+            title: t.name,
+            subtitle:
+                '${l.province(t.provinceId)} • ${t.days} ${l.t('days')} • ${t.seatsLeft} ${l.t('available')}',
+            trailing: l.money(t.priceYer),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) =>
+                    DetailsScreen(service: ServiceType.tour, targetId: t.id))),
+          ),
+      ];
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: tiles.isEmpty
+          ? Center(
+              child: Text(l.t('comingSoon'),
+                  style: TextStyle(color: Theme.of(context).hintColor)))
+          : ListView(padding: const EdgeInsets.all(16), children: tiles),
+    );
+  }
+}
+
+class _Tile extends StatelessWidget {
+  final IconData icon;
+  final String title, subtitle, trailing;
+  final VoidCallback onTap;
+
+  const _Tile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border:
+              Border.all(color: Theme.of(context).dividerColor.withOpacity(.4)),
+        ),
+        child: Row(children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: TIColors.teal.withOpacity(.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: TIColors.teal),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
+              const SizedBox(height: 3),
+              Text(subtitle,
+                  style: TextStyle(
+                      fontSize: 12, color: Theme.of(context).hintColor)),
+            ]),
+          ),
+          const SizedBox(width: 8),
+          Text(trailing,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w900, color: TIColors.teal)),
+        ]),
+      ),
+    );
   }
 }
 
@@ -213,7 +358,7 @@ class _HotelDetails extends StatelessWidget {
 
   void _bookRoom(BuildContext context, AppLocalizations l, Hotel hotel,
       HotelRoom room) {
-    final nights = 2; // Demo
+    final nights = 2;
     final total = room.pricePerNightYer * nights;
     showModalBottomSheet(
       context: context,
@@ -234,7 +379,7 @@ class _HotelDetails extends StatelessWidget {
 }
 
 // ============================================================
-// سيارة (مع سائق أو تأجير)
+// سيارة
 // ============================================================
 class _CarDetails extends StatelessWidget {
   final String carId;
@@ -291,9 +436,7 @@ class _CarDetails extends StatelessWidget {
         if (withDriver && car.driverName != null) ...[
           const SizedBox(height: 16),
           Row(children: [
-            const CircleAvatar(
-              child: Icon(Icons.person),
-            ),
+            const CircleAvatar(child: Icon(Icons.person)),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
