@@ -1,5 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../state/app_state.dart';
+
+extension AppStateAccess on AppState {
+  static AppState? instance;
+}
 
 class AppLocalizations {
   final Locale locale;
@@ -36,7 +41,7 @@ class AppLocalizations {
     }
   }
 
-   static String currency = 'YER';
+    String get currency => AppState.instance?.currency ?? 'YER';
 
   String duration(int minutes) {
     final h = minutes ~/ 60, m = minutes % 60;
