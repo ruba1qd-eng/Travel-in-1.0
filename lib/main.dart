@@ -30,16 +30,23 @@ class TravelInApp extends StatelessWidget {
           return MaterialApp(
             title: 'Travel In',
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.light,
-            darkTheme: AppTheme.dark,
+            theme: AppTheme.light.copyWith(
+              pageTransitionsTheme: const PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: SmoothPageTransitionsBuilder(),
+                  TargetPlatform.iOS: SmoothPageTransitionsBuilder(),
+                },
+              ),
+            ),
+            darkTheme: AppTheme.dark.copyWith(
+              pageTransitionsTheme: const PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: SmoothPageTransitionsBuilder(),
+                  TargetPlatform.iOS: SmoothPageTransitionsBuilder(),
+                },
+              ),
+            ),
             themeMode: state.themeMode,
-            themeAnimationDuration: const Duration(milliseconds: 300),
-           pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: SmoothPageTransitionsBuilder(),
-            TargetPlatform.iOS: SmoothPageTransitionsBuilder(),
-          },
-        ),
             locale: state.locale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: const [
