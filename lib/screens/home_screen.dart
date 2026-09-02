@@ -71,7 +71,7 @@ class HomeScreen extends StatelessWidget {
             if (state.notifications.isNotEmpty)
               Positioned(
                 top: 10,
-                end: 10,
+                right: 10,
                 child: Container(
                   width: 8,
                   height: 8,
