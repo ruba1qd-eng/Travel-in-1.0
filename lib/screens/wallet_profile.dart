@@ -7,6 +7,7 @@ import '../theme/app_theme.dart';
 import 'auth_screens.dart';
 import 'avatar_picker.dart';
 import 'support_screen.dart';
+import 'edit_profile_screen.dart';
 
 /// ============ تبويب المحفظة ============
 class WalletTab extends StatelessWidget {
@@ -204,7 +205,7 @@ class ProfileTab extends StatelessWidget {
           // بطاقة الملف
           Center(
             child: Column(children: [
-              // الصورة الشخصية — قابلة للتغيير من معرض الصور
+              // الصورة الشخصية — قابلة للتغيير والحذف
               const AvatarPicker(radius: 44),
               const SizedBox(height: 12),
               Text(user?.fullName ?? '',
@@ -242,6 +243,13 @@ class ProfileTab extends StatelessWidget {
           // الإعدادات
           _item(context, Icons.mail_outline,
               '${l.t('email')}: ${user?.email ?? user?.phone ?? '—'}', null),
+          // تعديل البيانات الشخصية — الاسم والبريد والرقم
+          _item(context, Icons.edit_outlined, 'تعديل البيانات', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+            );
+          }),
           _item(context, Icons.currency_exchange, l.t('currency'), () {
             _pickCurrency(context);
           }, trailing: state.currency),
