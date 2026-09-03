@@ -7,6 +7,7 @@ import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import 'details_screens.dart';
 import 'transport_booking_screen.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -84,9 +85,10 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // ===== البحث =====
+          // ===== البحث — يفتح شاشة البحث الشامل =====
           GestureDetector(
-            onTap: () {},
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SearchScreen())),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
