@@ -8,6 +8,7 @@ import 'auth_screens.dart';
 import 'avatar_picker.dart';
 import 'support_screen.dart';
 import 'edit_profile_screen.dart';
+import 'haptic.dart';
 
 /// ============ تبويب المحفظة ============
 class WalletTab extends StatelessWidget {
@@ -64,7 +65,10 @@ class WalletTab extends StatelessWidget {
           const SizedBox(height: 16),
           // إضافة رصيد (Demo)
           FilledButton.icon(
-            onPressed: () => _addMoney(context),
+            onPressed: () {
+              Haptics.light();
+              _addMoney(context);
+            },
             icon: const Icon(Icons.add_card),
             label: Text(l.t('addMoney')),
           ),
@@ -177,6 +181,7 @@ class WalletTab extends StatelessWidget {
                 final v = double.tryParse(c.text.trim());
                 if (v != null && v > 0) {
                   context.read<AppState>().addMoney(v);
+                  Haptics.success();
                 }
                 Navigator.pop(d);
               },
@@ -245,15 +250,18 @@ class ProfileTab extends StatelessWidget {
               '${l.t('email')}: ${user?.email ?? user?.phone ?? '—'}', null),
           // تعديل البيانات الشخصية — الاسم والبريد والرقم
           _item(context, Icons.edit_outlined, 'تعديل البيانات', () {
+            Haptics.light();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const EditProfileScreen()),
             );
           }),
           _item(context, Icons.currency_exchange, l.t('currency'), () {
+            Haptics.light();
             _pickCurrency(context);
           }, trailing: state.currency),
           _item(context, Icons.translate, l.t('language'), () {
+            Haptics.light();
             state.toggleLanguage();
           }, trailing: state.isRTL ? 'العربية' : 'English'),
           SwitchListTile(
@@ -263,13 +271,18 @@ class ProfileTab extends StatelessWidget {
             title: Text(state.isDark ? l.t('darkMode') : l.t('lightMode')),
             value: state.isDark,
             activeColor: TIColors.teal,
-            onChanged: (_) => state.toggleTheme(),
+            onChanged: (_) {
+              Haptics.light();
+              state.toggleTheme();
+            },
           ),
           _item(context, Icons.favorite_outline, l.t('favorites'), () {
+            Haptics.light();
             _showFavorites(context);
           }),
           // مركز المساعدة — يفتح محادثات الدعم الحقيقية
           _item(context, Icons.help_outline, l.t('helpCenter'), () {
+            Haptics.light();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const SupportScreen()),
@@ -371,6 +384,7 @@ class ProfileTab extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(d);
                 context.read<AppState>().logout();
+                Haptics.medium();
                 Navigator.of(context, rootNavigator: true)
                     .pushAndRemoveUntil(
                         MaterialPageRoute(
