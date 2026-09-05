@@ -20,6 +20,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.0'
+          cache: true
 
       - name: Generate project files
         run: flutter create . --platforms android,web --org com.travelin --project-name travel_in_app
@@ -44,6 +45,9 @@ jobs:
 
       - name: Build Web
         run: flutter build web --release --base-href /Travel-in-1.0/
+
+      - name: Copy APK into Web for direct download
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/web/travel-in-app.apk
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
