@@ -2,10 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../state/app_state.dart';
 
-extension AppStateAccess on AppState {
-  static AppState? instance;
-}
-
 class AppLocalizations {
   final Locale locale;
   const AppLocalizations(this.locale);
@@ -41,7 +37,7 @@ class AppLocalizations {
     }
   }
 
-    String get currency => AppState.instance?.currency ?? 'YER';
+  String get currency => AppState.instance?.currency ?? 'YER';
 
   String duration(int minutes) {
     final h = minutes ~/ 60, m = minutes % 60;
@@ -53,7 +49,7 @@ class AppLocalizations {
   static const Map<String, Map<String, String>> _v = {
     'ar': {
       'appName': 'Travel In',
-      'tagline': 'اسبح أفضل. اسرح اليمن',
+      'tagline': 'سافر أفضل. استكشف اليمن',
       'tagline2': 'Travel Better. Travel Yemen',
       'skip': 'تخطي',
       'whoUses': 'من سيستخدم Travel In؟',
@@ -123,6 +119,10 @@ class AppLocalizations {
       'comingSoon': 'قريباً',
       'unavailable': 'غير متوفر',
       'search': 'بحث',
+      'searchAll': 'ابحث عن فنادق، مدن، خدمات...',
+      'searchSuggestions': 'اقتراحات سريعة',
+      'searchNoResults': 'لا توجد نتائج مطابقة لبحثك',
+      'searchHotelsLive': 'فنادق (نتائج مباشرة)',
       'filters': 'فلاتر',
       'province': 'المحافظة',
       'city': 'المدينة',
@@ -207,6 +207,7 @@ class AppLocalizations {
       'favorites': 'المفضلة',
       'noFavorites': 'لا توجد عناصر مفضلة',
       'editProfile': 'تعديل الملف',
+      'editData': 'تعديل البيانات',
       'membership': 'العضوية',
       'basic': 'أساسي',
       'priority': 'أولوية',
@@ -217,6 +218,7 @@ class AppLocalizations {
       'lightMode': 'الوضع النهاري',
       'notifications': 'الإشعارات',
       'helpCenter': 'مركز المساعدة',
+      'aiAssistant': 'المساعد الذكي',
       'logout': 'تسجيل الخروج',
       'logoutQ': 'هل تريد تسجيل الخروج؟',
       'cancel': 'إلغاء',
@@ -227,6 +229,30 @@ class AppLocalizations {
       'soon': 'هذه الخدمة قريباً في محافظتك',
       'demoNote': 'بيئة تجريبية: جميع البيانات والمبالغ توضيحية فقط',
       'copied': 'تم النسخ',
+      'avatarPick': 'اضغط على الكاميرا لاختيار صورة',
+      'avatarChangeOrDelete': 'اضغط الكاميرا للتغيير أو سلة الحذف',
+      'avatarDeleted': 'تم حذف الصورة الشخصية ✓',
+      'deletePhoto': 'حذف الصورة',
+      'deletePhotoQ': 'هل تريد حذف صورتك الشخصية؟',
+      'delete': 'حذف',
+      'supportEmpty': 'اكتب رسالتك وسنرد عليك قريباً',
+      'supportHint': 'اكتب رسالة...',
+      'supportNewChat': 'محادثة جديدة',
+      'supportName': 'اسمك',
+      'supportSubject': 'موضوع المشكلة',
+      'supportStart': 'بدء المحادثة',
+      'supportNoChats': 'لا توجد محادثات بعد',
+      'supportOpen': 'مفتوحة',
+      'supportClosed': 'مغلقة',
+      'supportTitle': 'الدعم الفني',
+      'editProfileTitle': 'تعديل الملف الشخصي',
+      'firstName2': 'الاسم الأول',
+      'secondName2': 'الاسم الثاني',
+      'phone': 'رقم الجوال',
+      'savedOk': 'تم حفظ التعديلات بنجاح ✓',
+      'saveEdits': 'حفظ التعديلات',
+      'avatarUploadFail': 'فشل رفع الصورة',
+      'avatarDeleteFail': 'فشل حذف الصورة',
     },
     'en': {
       'appName': 'Travel In',
@@ -300,6 +326,10 @@ class AppLocalizations {
       'comingSoon': 'Coming Soon',
       'unavailable': 'Unavailable',
       'search': 'Search',
+      'searchAll': 'Search hotels, cities, services...',
+      'searchSuggestions': 'Quick suggestions',
+      'searchNoResults': 'No matching results',
+      'searchHotelsLive': 'Hotels (live results)',
       'filters': 'Filters',
       'province': 'Province',
       'city': 'City',
@@ -384,6 +414,7 @@ class AppLocalizations {
       'favorites': 'Favorites',
       'noFavorites': 'No favorites yet',
       'editProfile': 'Edit profile',
+      'editData': 'Edit data',
       'membership': 'Membership',
       'basic': 'Basic',
       'priority': 'Priority',
@@ -394,6 +425,7 @@ class AppLocalizations {
       'lightMode': 'Light mode',
       'notifications': 'Notifications',
       'helpCenter': 'Help center',
+      'aiAssistant': 'AI Assistant',
       'logout': 'Log out',
       'logoutQ': 'Do you want to log out?',
       'cancel': 'Cancel',
@@ -404,6 +436,30 @@ class AppLocalizations {
       'soon': 'This service is coming soon in your province',
       'demoNote': 'Demo environment: all data and amounts are illustrative only',
       'copied': 'Copied',
+      'avatarPick': 'Tap the camera to pick a photo',
+      'avatarChangeOrDelete': 'Tap camera to change or trash to delete',
+      'avatarDeleted': 'Profile photo deleted ✓',
+      'deletePhoto': 'Delete photo',
+      'deletePhotoQ': 'Do you want to delete your profile photo?',
+      'delete': 'Delete',
+      'supportEmpty': 'Write your message and we will reply soon',
+      'supportHint': 'Write a message...',
+      'supportNewChat': 'New chat',
+      'supportName': 'Your name',
+      'supportSubject': 'Issue subject',
+      'supportStart': 'Start chat',
+      'supportNoChats': 'No conversations yet',
+      'supportOpen': 'Open',
+      'supportClosed': 'Closed',
+      'supportTitle': 'Support',
+      'editProfileTitle': 'Edit profile',
+      'firstName2': 'First name',
+      'secondName2': 'Second name',
+      'phone': 'Mobile number',
+      'savedOk': 'Changes saved successfully ✓',
+      'saveEdits': 'Save changes',
+      'avatarUploadFail': 'Failed to upload photo',
+      'avatarDeleteFail': 'Failed to delete photo',
     },
   };
 
