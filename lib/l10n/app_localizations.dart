@@ -25,7 +25,6 @@ class AppLocalizations {
 
   /// العملة: YER / USD / SAR
   String money(double yer) {
-    // أسعار صرف تجريبية قابلة للتحديث من لوحة الإدارة مستقبلاً
     const yerPerUsd = 530.0, sarPerUsd = 3.75;
     switch (currency) {
       case 'USD':
@@ -246,9 +245,6 @@ class AppLocalizations {
       'supportClosed': 'مغلقة',
       'supportTitle': 'الدعم الفني',
       'editProfileTitle': 'تعديل الملف الشخصي',
-      'firstName2': 'الاسم الأول',
-      'secondName2': 'الاسم الثاني',
-      'phone': 'رقم الجوال',
       'savedOk': 'تم حفظ التعديلات بنجاح ✓',
       'saveEdits': 'حفظ التعديلات',
       'avatarUploadFail': 'فشل رفع الصورة',
@@ -453,9 +449,6 @@ class AppLocalizations {
       'supportClosed': 'Closed',
       'supportTitle': 'Support',
       'editProfileTitle': 'Edit profile',
-      'firstName2': 'First name',
-      'secondName2': 'Second name',
-      'phone': 'Mobile number',
       'savedOk': 'Changes saved successfully ✓',
       'saveEdits': 'Save changes',
       'avatarUploadFail': 'Failed to upload photo',
