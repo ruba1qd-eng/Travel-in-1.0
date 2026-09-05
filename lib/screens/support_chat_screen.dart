@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../supabase.dart';
 
 /// شاشة المحادثة — رسائل فورية عبر Supabase Realtime
+/// مع إدارة صحيحة للاشتراك (إلغاؤه عند مغادرة الشاشة)
 class SupportChatScreen extends StatefulWidget {
   final Map<String, dynamic> ticket;
   const SupportChatScreen({super.key, required this.ticket});
@@ -15,6 +17,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
   final _scroll = ScrollController();
   List<Map<String, dynamic>> _messages = [];
   late final String _ticketId;
+  StreamSubscription<List<Map<String, dynamic>>>? _sub;
 
   @override
   void initState() {
@@ -24,7 +27,8 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
   }
 
   void _listen() {
-    supabase
+    // حفظ الاشتراك حتى نتمكن من إلغائه في dispose — يمنع تسريب الذاكرة
+    _sub = supabase
         .from('support_messages')
         .stream(primaryKey: ['id'])
         .eq('ticket_id', _ticketId)
@@ -132,6 +136,8 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
 
   @override
   void dispose() {
+    // إلغاء الاشتراك الفوري — هذا هو الإصلاح الحقيقي
+    _sub?.cancel();
     _ctrl.dispose();
     _scroll.dispose();
     super.dispose();
